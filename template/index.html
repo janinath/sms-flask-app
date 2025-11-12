@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SMS Notifier</title>
+  <!-- Tailwind CDN for quick elegant styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="max-w-xl w-full p-8 bg-white rounded-2xl shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4">SMS Notifier</h1>
+    <p class="text-sm text-gray-500 mb-6">
+      Simple demo app — send an SMS from a web form. (UI placeholder)
+    </p>
+
+    <!-- Placeholder form (we'll hook this up later) -->
+    <form id="smsForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">To (E.164)</label>
+        <input name="to" type="text" placeholder="+1234567890"
+               class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Message</label>
+        <textarea name="body" rows="4"
+                  class="mt-1 block w-full border-gray-200 rounded-lg shadow-sm"
+                  placeholder="Hello from Twilio + Flask!"></textarea>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
+          Send SMS
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- We'll add JS later to POST the form -->
+</body>
+</html>
