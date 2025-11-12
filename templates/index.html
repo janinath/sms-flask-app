@@ -1,17 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WhatsApp Messaging App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SMS Notifier</title>
+  <!-- Tailwind CDN for quick elegant styling -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
     <h1 class="text-2xl font-bold text-center mb-6 text-green-600">
       📱 WhatsApp Messaging App
     </h1>
 
+    <!-- Placeholder form (we'll hook this up later) -->
     <form id="smsForm" action="/send-sms" method="POST" class="space-y-4">
       <div>
         <label class="block mb-1 font-medium">Recipient Number</label>
@@ -47,40 +50,49 @@
       <p id="status" class="text-center mt-3 text-sm text-gray-500"></p>
     </form>
   </div>
+<!-- Toast Notification -->
+<div id="toast" class="hidden fixed top-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-300">
+  <span id="toast-message"></span>
+</div>
 
-  <script>
-    const form = document.getElementById("smsForm");
-    const status = document.getElementById("status");
+  <!-- JS to POST the form -->
+   <script>
+document.getElementById("smsForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const to = document.getElementById("to").value.trim();
-      const body = document.getElementById("body").value.trim();
+  const to = e.target.to.value.trim();
+  const body = e.target.body.value.trim();
+  const toast = document.getElementById("toast");
+  const toastMessage = document.getElementById("toast-message");
+   // small helper to show toast
+  function showToast(message, success = true) {
+    toastMessage.textContent = message;
+    toast.classList.remove("hidden");
+    toast.classList.toggle("bg-green-600", success);
+    toast.classList.toggle("bg-red-600", !success);
 
-      if (!to.startsWith("whatsapp:+")) {
-        status.textContent = "⚠️ Please use format: whatsapp:+<countrycode><number>";
-        status.className = "text-center mt-3 text-red-500";
-        return;
-      }
-
-      if (body.length === 0) {
-        status.textContent = "⚠️ Message cannot be empty.";
-        status.className = "text-center mt-3 text-red-500";
-        return;
-      }
-
-      const formData = new FormData(form);
-      const response = await fetch("/send-sms", { method: "POST", body: formData });
-
-      if (response.ok) {
-        status.textContent = "✅ Message sent successfully!";
-        status.className = "text-center mt-3 text-green-600";
-        form.reset();
-      } else {
-        status.textContent = "❌ Failed to send message. Check logs.";
-        status.className = "text-center mt-3 text-red-500";
-      }
+    setTimeout(() => toast.classList.add("hidden"), 4000);
+  }
+   try {
+    const res = await fetch("/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, body })
     });
-  </script>
+
+  const result = await res.json();
+
+   if (result.success) {
+      showToast("✅ Message sent successfully!", true);
+      e.target.reset();
+    } else {
+      showToast("❌ Failed to send: " + result.error, false);
+    }
+  } catch (err) {
+    showToast("⚠️ Network error: " + err.message, false);
+  }
+});
+</script>
+
 </body>
 </html>
