@@ -26,14 +26,15 @@ def send_sms():
     data = request.get_json()
     to = data.get("to")
     body = data.get("body")
-    print("Using from_:", TWILIO_PHONE_NUMBER, "to:", to, "body:", body)
 
     try:
         message = client.messages.create(
-            body=body,
-            from_=TWILIO_PHONE_NUMBER,
-            to=to
-        )
+        from_=f"whatsapp:{TWILIO_PHONE_NUMBER.replace('whatsapp:', '')}",
+        to=f"whatsapp:{to}",
+        body=body
+    )
+
+        
         return jsonify({"success": True, "sid": message.sid})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 400
