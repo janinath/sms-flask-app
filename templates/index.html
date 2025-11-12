@@ -38,6 +38,30 @@
     </form>
   </div>
 
-  <!-- We'll add JS later to POST the form -->
+  <!-- JS to POST the form -->
+   <script>
+document.getElementById("smsForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const to = e.target.to.value.trim();
+  const body = e.target.body.value.trim();
+
+  const res = await fetch("/send-sms", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ to, body })
+  });
+
+  const result = await res.json();
+
+  if (result.success) {
+    alert("✅ SMS sent successfully! SID: " + result.sid);
+    e.target.reset();
+  } else {
+    alert("❌ Failed to send SMS: " + result.error);
+  }
+});
+</script>
+
 </body>
 </html>
